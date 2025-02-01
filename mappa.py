@@ -103,17 +103,6 @@ def execute_command(command):
     except subprocess.CalledProcessError as e:
         return f"Error: {e.stderr}"
 
-def initialize_repo():
-    try:
-        subprocess.run("git init", check=True, shell=True)
-        subprocess.run("git remote add origin https://github.com/Ghruank/mappa_x.git", check=True, shell=True)
-        subprocess.run("git add .", check=True, shell=True)
-        subprocess.run('git commit -m "Initial commit"', check=True, shell=True)
-        subprocess.run("git branch -M main", check=True, shell=True)
-        subprocess.run("git push -u origin main", check=True, shell=True)
-        print("Repository initialized and code pushed to GitHub.")
-    except subprocess.CalledProcessError as e:
-        print(f"Error initializing repo: {e}")
 
 def speak(text):
     voices = engine.getProperty('voices')
@@ -146,19 +135,15 @@ def main():
     
     while True:
         user_input = listen()
-        if "initialise repository" in user_input.lower():
-            initialize_repo()
-            speak("Repository initialized and code pushed to GitHub.")
-        elif "jarvis" in user_input.lower():
-            if mode == "api":
-                terminal_command = interpret_command_with_api(user_input)
-            elif mode == "local":
-                terminal_command = interpret_command_with_local_model(user_input, model, tokenizer)
-            
-            output = execute_command(terminal_command)
-            print(f"{output}")
+        if mode == "api":
+            terminal_command = interpret_command_with_api(user_input)
+        elif mode == "local":
+            terminal_command = interpret_command_with_local_model(user_input, model, tokenizer)
+        
+        output = execute_command(terminal_command)
+        print(f"{output}")
 
-            speak(output)
+        speak(output)
 
 if __name__ == "__main__":
     main()
